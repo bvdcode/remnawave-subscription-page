@@ -13,6 +13,22 @@ const booleanString = (def: 'true' | 'false' = 'false') =>
 
 const TRUST_PROXY_DEFAULT = '1';
 
+const optionalUrl = (name: string, allowedProtocols: string[]) =>
+    z
+        .string()
+        .trim()
+        .default('')
+        .refine(
+            (value) => {
+                if (value === '') return true;
+                if (!z.string().url().safeParse(value).success) return false;
+
+                return allowedProtocols.includes(new URL(value).protocol);
+            },
+            `${name} must be a valid URL using one of these protocols: ${allowedProtocols.join(', ')}`,
+        )
+        .transform((value) => (value === '' ? undefined : value));
+
 const isTrustProxy = (val: string): boolean => {
     if (val === 'true' || val === 'false' || /^\d+$/.test(val)) return true;
 
@@ -40,6 +56,19 @@ export const configSchema = z
 
         SUBPAGE_CONFIG_UUID: z.string().default('00000000-0000-0000-0000-000000000000'),
         CUSTOM_SUB_PREFIX: z.optional(z.string()),
+        ROOT_REDIRECT_TO: optionalUrl('ROOT_REDIRECT_TO', ['http:', 'https:']),
+        TELEGRAM_PROXY_API_URL: z
+            .string()
+            .trim()
+            .url()
+            .refine(
+                (value) => ['http:', 'https:'].includes(new URL(value).protocol),
+                'TELEGRAM_PROXY_API_URL must use http: or https:',
+            )
+            .refine(
+                (value) => value.split('{shortUuid}').length === 2,
+                'TELEGRAM_PROXY_API_URL must contain exactly one {shortUuid} placeholder',
+            ),
 
         TRUST_PROXY: z
             .string()

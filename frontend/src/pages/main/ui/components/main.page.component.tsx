@@ -11,6 +11,7 @@ import {
     SubscriptionInfoCollapsedWidget,
     SubscriptionInfoExpandedWidget,
     SubscriptionLinkWidget,
+    TelegramProxyWidget,
     TimelineBlockRenderer
 } from '@widgets/main'
 import { useAppConfig, useAppConfigStoreActions, useCurrentLang } from '@entities/app-config-store'
@@ -113,6 +114,8 @@ export const MainPageComponent = ({ isMobile, platform }: IMainPageComponentProp
                     {SubscriptionInfoBlockRenderer && (
                         <SubscriptionInfoBlockRenderer isMobile={isMobile} />
                     )}
+
+                    <TelegramProxyWidget isMobile={isMobile} />
 
                     {atLeastOnePlatformApp && (
                         <InstallationGuideConnector

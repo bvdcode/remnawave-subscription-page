@@ -12,18 +12,25 @@ import morgan from 'morgan';
 import * as ejs from 'ejs';
 
 import { NestExpressApplication } from '@nestjs/platform-express';
+import { RequestMethod } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 
 import { APP_CONFIG_ROUTE_WO_LEADING_PATH } from '@remnawave/subscription-page-types';
 
+import {
+    createRootRedirectMiddleware,
+    noRobotsMiddleware,
+    proxyCheckMiddleware,
+} from '@common/middlewares';
 import { checkAssetsCookieMiddleware } from '@common/middlewares/check-assets-cookie.middleware';
 import { NotFoundExceptionFilter } from '@common/exception/not-found-exception.filter';
 import { isDevelopment, isDevOrDebugLogsEnabled } from '@common/utils/startup-app';
-import { noRobotsMiddleware, proxyCheckMiddleware } from '@common/middlewares';
 import { getStartMessage } from '@common/utils/startup-app/get-start-message';
 import { customLogFilter } from '@common/utils/filter-logs/filter-logs';
 import { TypedConfigService } from '@common/config/app-config';
 import { getRealIp } from '@common/middlewares/get-real-ip';
+
+import { TELEGRAM_PROXY_INTERNAL_API_ROUTE } from '@modules/root/telegram-proxy.constants';
 
 import { AppModule } from './app.module';
 
@@ -105,9 +112,16 @@ async function bootstrap(): Promise<void> {
         ),
     );
 
+    app.use(createRootRedirectMiddleware(config.get('ROOT_REDIRECT_TO')));
+
     const customSubPrefix = config.get('CUSTOM_SUB_PREFIX');
 
-    app.setGlobalPrefix(customSubPrefix ?? '', { exclude: [APP_CONFIG_ROUTE_WO_LEADING_PATH] });
+    app.setGlobalPrefix(customSubPrefix ?? '', {
+        exclude: [
+            APP_CONFIG_ROUTE_WO_LEADING_PATH,
+            { path: TELEGRAM_PROXY_INTERNAL_API_ROUTE, method: RequestMethod.GET },
+        ],
+    });
 
     if (customSubPrefix) {
         logger.info('[CONFIG] CUSTOM_SUB_PREFIX: ' + customSubPrefix);
