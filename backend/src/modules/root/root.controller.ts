@@ -47,6 +47,9 @@ export class RootController {
             case 'bad-request':
                 response.sendStatus(HttpStatus.BAD_REQUEST);
                 return;
+            case 'invalid-response':
+                response.status(HttpStatus.BAD_GATEWAY).json({ code: 'invalid-response' });
+                return;
             case 'not-found':
                 response.sendStatus(HttpStatus.NOT_FOUND);
                 return;

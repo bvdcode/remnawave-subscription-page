@@ -1,12 +1,12 @@
-import { z } from 'zod'
+import { z } from 'zod';
 
 const TelegramProxyLinkSchema = z.object({
     title: z.string(),
     url: z
         .string()
         .url()
-        .refine((value) => new URL(value).protocol === 'tg:', 'Expected a tg:// URL')
-})
+        .refine((value) => new URL(value).protocol === 'tg:', 'Expected a tg:// URL'),
+});
 
 const TelegramProxySchema = z.object({
     id: z.string(),
@@ -17,20 +17,15 @@ const TelegramProxySchema = z.object({
     usage: z.object({
         usedBytes: z.number().nonnegative(),
         quotaBytes: z.number().nonnegative().nullable(),
-        percentage: z.number().nonnegative().nullable()
-    })
-})
+        percentage: z.number().nonnegative().nullable(),
+    }),
+});
 
 export const TelegramProxyResponseSchema = z.object({
     shortUuid: z.string(),
     hasAccess: z.boolean(),
     isConfigured: z.boolean(),
-    proxies: z.array(TelegramProxySchema)
-})
+    proxies: z.array(TelegramProxySchema),
+});
 
-export const TelegramProxyErrorResponseSchema = z.object({
-    code: z.literal('invalid-response')
-})
-
-export type TTelegramProxy = z.infer<typeof TelegramProxySchema>
-export type TTelegramProxyResponse = z.infer<typeof TelegramProxyResponseSchema>
+export type TTelegramProxyResponse = z.infer<typeof TelegramProxyResponseSchema>;

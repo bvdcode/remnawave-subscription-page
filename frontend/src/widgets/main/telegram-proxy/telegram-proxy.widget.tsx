@@ -16,17 +16,21 @@ interface IProps {
     isMobile: boolean
 }
 
+const assertNever = (value: never): never => {
+    throw new Error(`Unexpected Telegram proxy API result: ${JSON.stringify(value)}`)
+}
+
 export const TelegramProxyWidget = ({ isMobile }: IProps) => {
     const [isLoading, setIsLoading] = useState(false)
     const { currentLang } = useTranslation()
     const subscription = useSubscription()
     const text = TELEGRAM_PROXY_TRANSLATIONS[currentLang]
 
-    const showUnavailableNotification = (message: string) => {
+    const showNotification = (message: string, color: 'orange' | 'red') => {
         notifications.show({
             title: text.title,
             message,
-            color: 'orange'
+            color
         })
     }
 
@@ -35,34 +39,49 @@ export const TelegramProxyWidget = ({ isMobile }: IProps) => {
         setIsLoading(true)
 
         try {
-            const response = await getTelegramProxies(subscription.user.shortUuid)
+            const result = await getTelegramProxies(subscription.user.shortUuid)
 
-            if (!response.hasAccess) {
-                showUnavailableNotification(text.noAccess)
-                return
+            switch (result.status) {
+                case 'bad-request':
+                    showNotification(text.badRequest, 'red')
+                    return
+                case 'invalid-response':
+                    showNotification(text.invalidResponse, 'red')
+                    return
+                case 'not-found':
+                    showNotification(text.notFound, 'orange')
+                    return
+                case 'success': {
+                    const response = result.data
+
+                    if (!response.hasAccess) {
+                        showNotification(text.noAccess, 'orange')
+                        return
+                    }
+
+                    if (!response.isConfigured) {
+                        showNotification(text.notConfigured, 'orange')
+                        return
+                    }
+
+                    if (response.proxies.length === 0) {
+                        showNotification(text.empty, 'orange')
+                        return
+                    }
+
+                    modals.open({
+                        centered: true,
+                        title: text.title,
+                        children: <TelegramProxyModal proxies={response.proxies} />
+                    })
+                    return
+                }
+                case 'unavailable':
+                    showNotification(text.unavailable, 'red')
+                    return
+                default:
+                    assertNever(result)
             }
-
-            if (!response.isConfigured) {
-                showUnavailableNotification(text.notConfigured)
-                return
-            }
-
-            if (response.proxies.length === 0) {
-                showUnavailableNotification(text.empty)
-                return
-            }
-
-            modals.open({
-                centered: true,
-                title: text.title,
-                children: <TelegramProxyModal proxies={response.proxies} />
-            })
-        } catch {
-            notifications.show({
-                title: text.title,
-                message: text.loadError,
-                color: 'red'
-            })
         } finally {
             setIsLoading(false)
         }
