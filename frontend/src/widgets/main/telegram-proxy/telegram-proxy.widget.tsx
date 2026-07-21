@@ -1,6 +1,6 @@
+import { Button, Card, Group, Text } from '@mantine/core'
 import { IconBrandTelegram } from '@tabler/icons-react'
 import { notifications } from '@mantine/notifications'
-import { Button, Center } from '@mantine/core'
 import { modals } from '@mantine/modals'
 import { useState } from 'react'
 
@@ -87,18 +87,29 @@ export const TelegramProxyWidget = ({ isMobile }: IProps) => {
         }
     }
 
+    const button = (
+        <Button
+            fullWidth={isMobile}
+            leftSection={<IconBrandTelegram />}
+            loading={isLoading}
+            onClick={handleOpenTelegramProxies}
+            radius="md"
+            variant="light"
+        >
+            {text.button}
+        </Button>
+    )
+
+    if (isMobile) return button
+
     return (
-        <Center>
-            <Button
-                fullWidth={isMobile}
-                leftSection={<IconBrandTelegram />}
-                loading={isLoading}
-                onClick={handleOpenTelegramProxies}
-                radius="md"
-                variant="light"
-            >
-                {text.button}
-            </Button>
-        </Center>
+        <Card p={{ base: 'sm', xs: 'md', sm: 'lg', md: 'xl' }} radius="lg">
+            <Group justify="space-between">
+                <Text c="white" fw={600} size="lg">
+                    {text.title}
+                </Text>
+                {button}
+            </Group>
+        </Card>
     )
 }
