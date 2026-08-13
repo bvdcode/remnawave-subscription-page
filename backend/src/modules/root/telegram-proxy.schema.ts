@@ -12,7 +12,6 @@ const TelegramProxySchema = z.object({
     id: z.string(),
     displayName: z.string(),
     emoji: z.string(),
-    secure: TelegramProxyLinkSchema,
     tls: TelegramProxyLinkSchema,
     usage: z.object({
         usedBytes: z.number().nonnegative(),
