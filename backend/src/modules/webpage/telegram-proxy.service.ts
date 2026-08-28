@@ -4,8 +4,8 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { TypedConfigService } from '@common/config/app-config';
 
-import { TelegramProxyResponseSchema, TTelegramProxyResponse } from './telegram-proxy.schema';
 import { TELEGRAM_PROXY_SHORT_UUID_PLACEHOLDER } from './telegram-proxy.constants';
+import { TelegramProxyResponseSchema, TTelegramProxyResponse } from './telegram-proxy.schema';
 
 export type TTelegramProxyApiResult =
     | { data: TTelegramProxyResponse; status: 'success' }

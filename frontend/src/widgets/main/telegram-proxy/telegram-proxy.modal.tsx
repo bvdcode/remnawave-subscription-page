@@ -1,5 +1,5 @@
-import { IconBrandTelegram } from '@tabler/icons-react'
 import { Button, Paper, Stack } from '@mantine/core'
+import { IconBrandTelegram } from '@tabler/icons-react'
 
 import { TTelegramProxy } from './telegram-proxy.schema'
 

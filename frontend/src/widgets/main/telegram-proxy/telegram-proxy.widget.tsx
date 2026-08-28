@@ -1,16 +1,17 @@
 import { Button, Card, Group, Text } from '@mantine/core'
-import { IconBrandTelegram } from '@tabler/icons-react'
-import { notifications } from '@mantine/notifications'
 import { modals } from '@mantine/modals'
+import { notifications } from '@mantine/notifications'
+import { IconBrandTelegram } from '@tabler/icons-react'
 import { useState } from 'react'
 
-import { useSubscription } from '@entities/subscription-info-store'
-import { vibrate } from '@shared/utils/vibrate'
 import { useTranslation } from '@shared/hooks'
+import { vibrate } from '@shared/utils/vibrate'
 
-import { TELEGRAM_PROXY_TRANSLATIONS } from './telegram-proxy.translations'
-import { TelegramProxyModal } from './telegram-proxy.modal'
+import { useSubscription } from '@entities/subscription-info-store'
+
 import { getTelegramProxies } from './telegram-proxy.api'
+import { TelegramProxyModal } from './telegram-proxy.modal'
+import { TELEGRAM_PROXY_TRANSLATIONS } from './telegram-proxy.translations'
 
 interface IProps {
     isMobile: boolean
