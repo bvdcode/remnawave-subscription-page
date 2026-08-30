@@ -24,13 +24,7 @@ body {
         url('/assets/airport-background.png');
     background-position: center, center, center, left top;
     background-repeat: no-repeat;
-    background-size: cover;
-}
-
-@media (max-aspect-ratio: 3 / 4) {
-    .animated-background {
-        background-size: cover, cover, cover, auto 80%;
-    }
+    background-size: cover, cover, cover, contain;
 }
 
 .header-wrapper {
